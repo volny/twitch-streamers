@@ -50,6 +50,7 @@ function appendRows(streamers) {
 appendRows(streamers);
 
 // IMPROVEMENTS:
+// handle ajax errors
 // order rows by status (streaming -> prepend, else append)
 // conditional color - streaming have a background color, closed/non existent have grey text
 // don't link to non-existent accounts
