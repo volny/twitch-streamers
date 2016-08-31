@@ -33,9 +33,14 @@ function getStreamerStatus(obj) {
   }
 }
 
-// forget about the <a> - the only way to make tablerows clickable is with an eventhandler
-function makeRowString(streamer, status, url) {
-  return '<tr><td>' + streamer + '</td><td>' + status + '</td></tr>';
+function makeRow(streamer, status) {
+  let row = $('<tr><td>' + streamer + '</td><td>' + status + '</td></tr>');
+  row.attr('data-href', 'https://www.twitch.tv/' + streamer);
+  // don't use arrow func bc of lexical scope `this`
+  $(row).on('click', function() {
+    window.document.location = $(this).data('href')
+  });
+  return row;
 }
 
 function appendRows(streamers) {
@@ -44,8 +49,7 @@ function appendRows(streamers) {
   }
 
   getData(streamers[0]).done((data) => {
-    let rowString = makeRowString(streamers[0], getStreamerStatus(data), 'https://google.com');
-    $('tbody').append(rowString);
+    $('#tablebody').append(makeRow(streamers[0], getStreamerStatus(data)));
   });
 
   return appendRows(streamers.slice(1));
@@ -53,3 +57,4 @@ function appendRows(streamers) {
 
 appendRows(streamers);
 
+// todo order entries
