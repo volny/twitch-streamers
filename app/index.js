@@ -1,11 +1,28 @@
 'use strict';
 import './style.scss';
+import $ from 'jquery';
 
-// using rest properties - choosen at random bc it currently raises
-// an error in all browsers, but can be transpiled by Babel
-const { x, y, ...z } = { x: 1, y: 2, a: 3, b: 4 };
-const app = document.querySelector('#app')
-if (x && y && z.a && z.b) {
-  document.querySelector('#app').insertAdjacentHTML('afterbegin', '<h1>works.</h1>');
+const streamers = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"]
+
+function makeURL(streamer) {
+  return 'https://api.twitch.tv/kraken/streams/' + streamer + '?callback=?';
 }
+
+// returns a jQuery deferred object
+function getData(url) {
+  return $.getJSON(url, {
+    format: "jsonp"
+  });
+}
+
+function getChannelURL(streamer) {
+  return getData(makeURL(streamer)).done((data) => (data._links.channel))
+}
+
+function getAllChannelURLs(streamers) {
+  return streamers.map((streamer) => getChannelURL(streamer))
+}
+
+
+console.log(getAllChannelURLs(streamers))
 
