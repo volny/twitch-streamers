@@ -4,32 +4,24 @@ import $ from 'jquery';
 
 const streamers = ["brunofin","ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"]
 
-function makeURL(streamer) {
-  return 'https://api.twitch.tv/kraken/streams/' + streamer + '?callback=?';
-}
-
-// returns a promise
-function getJSONP(url) {
+// returns a jQuery deferred object
+function getData(streamer) {
+  let url =  'https://api.twitch.tv/kraken/streams/' + streamer + '?callback=?';
   return $.getJSON(url, {
     format: "jsonp"
   });
 }
 
-// returns a promise
-function getData(streamer) {
-  return getJSONP(makeURL(streamer));
-}
-
-function getStreamerStatus(obj) {
-  switch (obj.stream) {
+function getStreamerStatus({stream}) {
+  switch (stream) {
     case null:
       return 'Offline';
       break;
     case undefined:
-      return 'Account Closed';
+      return 'Account doesn\'t exist';
       break;
     default:
-      return obj.stream.game;
+      return stream.game;
   }
 }
 
@@ -57,4 +49,11 @@ function appendRows(streamers) {
 
 appendRows(streamers);
 
-// todo order entries
+// IMPROVEMENTS:
+// order rows by status (streaming -> prepend, else append)
+// conditional color - streaming have a background color, closed/non existent have grey text
+// don't link to non-existent accounts
+// toggle to see only streaming / see all
+// ...
+// let user add streamers and remove streamers
+// save a users 'followers' (streamers) to localStorage
