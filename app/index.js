@@ -8,21 +8,25 @@ function makeURL(streamer) {
   return 'https://api.twitch.tv/kraken/streams/' + streamer + '?callback=?';
 }
 
-// returns a jQuery deferred object
+// returns a deferred object
 function getData(url) {
   return $.getJSON(url, {
     format: "jsonp"
   });
 }
 
+// returns a deferred object
 function getChannelURL(streamer) {
-  return getData(makeURL(streamer)).done((data) => (data._links.channel))
+  return getData(makeURL(streamer));
 }
 
-function getAllChannelURLs(streamers) {
-  return streamers.map((streamer) => getChannelURL(streamer))
+// returns an array of deferred objects
+function getAllChannels(streamers) {
+  return streamers.map((streamer) => (getChannelURL(streamer)))
 }
 
-
-console.log(getAllChannelURLs(streamers))
+// resolve promises and log data
+getAllChannels(streamers).map(
+  (promise) => (promise.done((data) => console.log(data._links.channel)))
+);
 
