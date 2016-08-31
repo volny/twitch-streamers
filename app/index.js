@@ -20,9 +20,9 @@ function getChannelURL(streamer) {
   return getData(makeURL(streamer, 'streams'));
 }
 
-// returns an array of deferred objects
+// returns an array of arrays containing streamer name and deferred object
 function getAllChannels(streamers) {
-  return streamers.map((streamer) => (getChannelURL(streamer)))
+  return streamers.map((streamer) => ([streamer, getChannelURL(streamer)]))
 }
 
 function getStreamerStatus(obj) {
@@ -38,6 +38,20 @@ function getStreamerStatus(obj) {
   }
 }
 
+// instead of logging it put in in a table in the DOM
+function insertData(data) {
+  $('tbody').append('<tr><td>Streamer</td><td>' + getStreamerStatus(data) + '</td></tr>')
+}
+
 const logStatus = (data) => console.log(getStreamerStatus(data))
-getAllChannels(streamers).map((promise) => (promise.done(logStatus)));
+
+getAllChannels(streamers).map((array) => {
+    //array[1].done(logStatus);
+    array[1].done(insertData);
+  }
+);
+
+// todo
+// get the names in the table
+// make alternating rows striped
 
