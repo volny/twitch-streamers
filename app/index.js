@@ -2,10 +2,10 @@
 import './style.scss';
 import $ from 'jquery';
 
-const streamers = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"]
+const streamers = ["brunofin","ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"]
 
-function makeURL(streamer) {
-  return 'https://api.twitch.tv/kraken/streams/' + streamer + '?callback=?';
+function makeURL(streamer, type) {
+  return 'https://api.twitch.tv/kraken/' + type  + '/' + streamer + '?callback=?';
 }
 
 // returns a deferred object
@@ -17,7 +17,7 @@ function getData(url) {
 
 // returns a deferred object
 function getChannelURL(streamer) {
-  return getData(makeURL(streamer));
+  return getData(makeURL(streamer, 'streams'));
 }
 
 // returns an array of deferred objects
@@ -25,8 +25,19 @@ function getAllChannels(streamers) {
   return streamers.map((streamer) => (getChannelURL(streamer)))
 }
 
-// resolve promises and log data
-getAllChannels(streamers).map(
-  (promise) => (promise.done((data) => console.log(data._links.channel)))
-);
+function getStreamerStatus(obj) {
+  switch (obj.stream) {
+    case null:
+      return 'Offline';
+      break;
+    case undefined:
+      return 'Account Closed';
+      break;
+    default:
+      return obj.stream.game;
+  }
+}
+
+const logStatus = (data) => console.log(getStreamerStatus(data))
+getAllChannels(streamers).map((promise) => (promise.done(logStatus)));
 
