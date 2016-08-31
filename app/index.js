@@ -16,10 +16,8 @@ function getStreamerStatus({stream}) {
   switch (stream) {
     case null:
       return 'Offline';
-      break;
     case undefined:
       return 'Account doesn\'t exist';
-      break;
     default:
       return stream.game;
   }
