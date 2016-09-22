@@ -1,24 +1,27 @@
 import './style.scss';
 import $ from 'jquery';
 
-const streamers = ["brunofin","ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"]
+
+const streamers = ["brunofin", "ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"]
 
 // returns a jQuery deferred object
 function getData(streamer) {
-  let url =  'https://api.twitch.tv/kraken/streams/' + streamer + '?callback=?';
-  return $.getJSON(url, {
-    format: "jsonp"
+  return $.ajax({
+    type: 'GET',
+    url: 'https://api.twitch.tv/kraken/streams/' + streamer,
+    headers: {
+       'Client-ID': '5puwrcs78w6jyvx241fmtz75bt4kfhe'
+    }
   });
 }
 
 function getStreamerStatus({stream}) {
-  switch (stream) {
-    case null:
-      return 'Offline';
-    case undefined:
-      return 'Account doesn\'t exist';
-    default:
-      return stream.game;
+  if (typeof(stream) !== 'object') {
+    return 'Account doesn\'t exist';
+  } else if (stream === null) {
+    return 'Offline';
+  } else {
+    return stream.game;
   }
 }
 
@@ -47,10 +50,10 @@ function appendRows(streamers) {
 appendRows(streamers);
 
 // IMPROVEMENTS:
+// non-existing accounts: changes in Twitch API, now nothing gets returned for them. FCC wants a 'Account not found row'
 // handle ajax errors
 // order rows by status (streaming -> prepend, else append)
 // conditional color - streaming have a background color, closed/non existent have grey text
-// don't link to non-existent accounts
 // toggle to see only streaming / see all
 // ...
 // let user add streamers and remove streamers
